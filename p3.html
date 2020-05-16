@@ -1,0 +1,115 @@
+<figure>
+    <figcaption>Lexer</figcaption>
+    <p>For this project in my Compilers class i created a lexer in Python.
+       </p>
+    <pre>
+      <code>
+        digits = ['0','1','2','3','4','5','6','7','8','9']
+        keyword = ['int', 'float', 'bool', 'if', 'else', 'then', 'endif', 'while', 'whileend', 'do', 'doend', 'for', 'forend', 'input', 'output', 'and', 'or', 'function']
+        separators = ["'", "(", ")", "{", "}", "[", "]", ",", ".", ":", ";"]
+        operators = ['*','+','-','=','/','>','<','%']
+
+
+        class Lexer:
+
+            def __init__(self, data):
+                self.data = data
+                self.pos = -1
+                self.character = None
+                self.tokens = []
+                self.characters = []
+                self.advance()
+
+            def advance(self):
+                self.pos += 1
+                self.character = self.data[self.pos] if self.pos < len(self.data) else None
+
+            def make_keyword_or_identifier(self):
+                temp_str = ''
+
+                while self.character != None and (self.character.isalpha() or self.character.isdigit() or self.character == '$'):
+
+                    temp_str += self.character
+
+                    if temp_str in keyword:
+                        if data[self.pos+1:self.pos+4] == 'end':
+                            temp_str += 'end'
+                            self.advance()
+                            self.advance()
+                            self.advance()
+
+                        self.advance()
+                        return temp_str
+
+                    self.advance()
+
+                return temp_str
+
+            def make_real(self):
+                real_str = ''
+                dot_count = 0
+
+                while self.character != None and (self.character.isdigit() or self.character == '.'):
+                    if self.character == '.':
+                        if dot_count == 1: break
+                        dot_count += 1
+                        real_str += self.character
+                    else:
+                        real_str += self.character
+                    self.advance()
+
+                return real_str
+
+            def goTillNextEx(self):
+                self.advance()
+                while self.character != '!':
+                    self.advance()
+
+
+
+            def make_token(self):
+
+                while self.character != None:
+                    if self.character == '!':
+                        self.goTillNextEx()
+                        self.advance()
+                    if self.character == ' ':
+                        self.advance()
+                    if self.character.isalpha():
+                        temp = self.make_keyword_or_identifier()
+                        if temp in keyword:
+                            self.tokens.append('KEYWORD')
+                        else:
+                            self.tokens.append('IDENTIFIER')
+                        self.characters.append(temp)
+                    if self.character in digits:
+                        self.characters.append(self.make_real())
+                        self.tokens.append('REAL')
+                    if self.character in separators:
+                        self.characters.append(self.character)
+                        self.tokens.append('SEPARATOR')
+                        self.advance()
+                    if self.character in operators:
+                        self.characters.append(self.character)
+                        self.tokens.append('OPERATOR')
+                        self.advance()
+
+
+
+        with open('text.txt', 'r') as file:
+            data = file.read().replace('\n', '')
+
+
+        lexer = Lexer(data)
+        lexer.make_token()
+
+
+        i = 0
+        out = open('output.txt', 'w')
+
+        while i < len(lexer.tokens):
+            out.write(f'{lexer.tokens[i]:10}       =       {lexer.characters[i]:10}\n')
+            i += 1
+      </code>
+    </pre>
+  </figure>

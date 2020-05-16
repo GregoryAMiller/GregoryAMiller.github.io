@@ -1,0 +1,117 @@
+<figure>
+    <figcaption>Your code title</figcaption>
+    <pre>
+      <code>
+        image_count = 300
+
+        def image_process(arr):
+            for i in arr:
+                pixels = i.load()
+                for x in range(im.size[0]):
+                    for y in range(im.size[1]):
+                        if pixels[x, y][0] > 150:
+                            # g_val = pixels[x, y][1]
+                            # b_val = pixels[x, y][2]
+                            #print(pixels[x, y][0])
+                            pixels[x, y] = (250, 250, 250)
+
+        image_list = []
+        for _ in range(image_count):
+            temp_image = im.copy()
+            image_list.append(temp_image)
+
+        # image_arr = np.array(image_list)
+
+        finish = time.perf_counter()
+
+        final_time = finish - start
+
+        print(f'Finished in {final_time} seconds: Load image and create image_list')
+        #im.show()
+        start = time.perf_counter()
+
+
+        for i in image_list:
+            pixels = i.load()
+            for x in range(im.size[0]):
+                for y in range(im.size[1]):
+                    if pixels[x, y][0] > 150:
+                        # g_val = pixels[x, y][1]
+                        # b_val = pixels[x, y][2]
+                        #print(pixels[x, y][0])
+                        pixels[x, y] = (150, 150, 150)
+
+
+        finish = time.perf_counter()
+        #image_list[0].show()
+
+        final_time = finish - start
+        print(f'Finished in {final_time} seconds: sequential')
+
+        # # with open("imageProcessing.txt", "a") as f:
+        # #      f.write(f'Sequential, {final_time}')
+
+
+        # with open("imageProcessing.txt", "r+") as f:
+        #      old = f.read() # read everything in the file
+        #      f.seek(0) # rewind
+        #      f.write(f' {old} Sequential Image Count: {image_count}, Final Time: {final_time}\n') # write the new line before
+
+
+        image_list = []
+        for _ in range(image_count):
+            temp_image = im.copy()
+            image_list.append(temp_image)
+
+        start = time.perf_counter()
+
+
+
+
+
+        process_count = 20
+        new_image_list = []
+        length_im_list = len(image_list)
+
+        for i in range(0, len(image_list), int(length_im_list / process_count)):
+                # Create an index range for l of n items:
+                new_image_list.append(image_list[i : i + int(length_im_list / process_count)])
+
+        # for a in new_image_list:
+        #     print(len(a))
+
+        # print(new_image_list)
+        # print(new_image_list[0])
+        which_array = 0
+        array_index = 0
+        processes = []
+        for arr in new_image_list:
+            # print(array_index)
+            # p = multiprocessing.Process(target=image_process, args=[new_image_list[which_array][array_index]])
+            p = multiprocessing.Process(target=image_process, args=[arr])
+            p.start()
+            processes.append(p)
+            # array_index += 1
+
+        for p in processes:
+            p.join()
+
+        finish = time.perf_counter()
+
+        final_time = finish - start
+
+        print(f'Finished in {final_time} seconds: parallel')
+
+
+
+        # with open("imageProcessing.txt", "a") as f:
+        #      f.write(f'{process_count}, {final_time}')
+
+
+        with open("imageProcessing.txt", "r+") as f:
+            old = f.read() # read everything in the file
+            f.seek(0) # rewind
+            f.write(f' {old} Process Count: {process_count}, Image Count: {image_count}, Final Time:{final_time}\n') # write the new line before
+      </code>
+    </pre>
+  </figure>
